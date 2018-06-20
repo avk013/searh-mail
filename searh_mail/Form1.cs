@@ -236,5 +236,56 @@ namespace searh_mail
             else outs = "error open profile thunderbird";
             return outs;
         }
+        private void out_mail()
+        {
+            string[] dir_s = { @"thunderbird\", @"Users\", @"mail\", @"почта\", @"пошта\", @"Bat\", @"The Bat\", @"TheBat\", @"TheBat!\", @"The Bat!\" };
+            string[] Drives = Environment.GetLogicalDrives();
+            string[] pattches = new string[100];
+            int i = 0;
+            foreach (string s in Drives) //ищем диски и помещаем список в массив
+            { foreach (string sd in dir_s)
+                    pattches[i++] = s + sd;}
+            string PatchProfile = "";
+            string ListPatch = ""; //заголовок для строк
+            //ищем все вложенные папки 
+            for (i = 0; i < pattches.Length; i++)
+            {   PatchProfile = pattches[i];
+                string[] S = SearchDirectory(PatchProfile);
+                //создаем строку в которой соберем все пути
+                foreach (string folderPatch in S)
+                { try
+                    {
+                        //пытаемся найти данные в папке 
+                        //string[] F = SearchFile(folderPatch, "*.png");
+                        string[] F = SearchFile(folderPatch, "prefs.js");
+                        // string[] F = SearchFile(@"e:\", "prefs.js");
+                        foreach (string FF in F)
+                        {
+                            //добавляем файл в список 
+                       //     ListPatch += FF + "\n";
+                            ListPatch += mail_thunderbird( FF) + "\n";
+                        }
+                        F = SearchFile(folderPatch, "Account.CFN");
+                        // string[] F = SearchFile(@"e:\", "prefs.js");
+                        foreach (string FF in F)
+                        {
+                            //добавляем файл в список 
+                            ListPatch += FF + "\n";
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+            //выводим список на экран 
+            MessageBox.Show(ListPatch);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            out_mail();
+        }
     }
 }
