@@ -21,23 +21,18 @@ namespace searh_mail
         const string pass = "pa100slow";
         const string db = "inventar";
         string[] data2db = new string[1];
+        string folder_path = @"e:\!invent\";
         public Form1()
         {
             InitializeComponent();
         }
         static string[] SearchDirectory(string patch)
-        {
-
-            //находим все папки в по указанному пути
-            try
-            {
-                string[] ReultSearch = Directory.GetDirectories(patch);
-                //возвращаем список директорий
-                return ReultSearch;
-            }
-            catch { }
-            string[] er = { };
-            return er;
+        { //находим все папки в по указанному пути
+            try {
+                    string[] ReultSearch = Directory.GetDirectories(patch);
+                    return ReultSearch; //возвращаем список директорий
+                }
+            catch { } string[] er = { }; return er;//если ошибка
         }
         static string[] SearchFile(string patch, string pattern)
         {
@@ -439,15 +434,12 @@ namespace searh_mail
         }
 
         private void button7_Click(object sender, EventArgs e)
-        {
-            //aida /r filename /text /langru /safe /hw /html /custom C:\1.rpf
-            Process.Start(@"e:\!invent\aida64", @"/r e:\!invent\out\filename /text /langru /safe /hw /html /custom e:\!invent\1.rpf");
-            //  Process.WaitForExit();
-        }
+        {  //aida /r filename /text /langru /safe /hw /html /custom C:\1.rpf
+            Process.Start(@"e:\!invent\aida64", @"/r "+folder_path+ @"out\filename /text /langru /safe /hw /html /custom " + folder_path + @"1.rpf");
+            }
 
         private void button8_Click(object sender, EventArgs e)
-        {
-            //.oeaccount
+        {    //.oeaccount
             //   string[] dir_s = { @"Users\upi\AppData\Local\Microsoft\Windows Live Mail\" };
             string appdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             // appdata = appdata.Substring(3, appdata.Length-"Roaming".Length-3);
@@ -490,6 +482,26 @@ namespace searh_mail
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        {
+            label1.Text = folder_path;
+        }
+
+        private void button8_Click_1(object sender, EventArgs e)
+        {
+            FolderBrowserDialog FBD = new FolderBrowserDialog();
+            FBD.ShowNewFolderButton = false;
+            if (FBD.ShowDialog() == DialogResult.OK)
+            {
+                folder_path = FBD.SelectedPath; label1.Text = folder_path;
+            }
+        }
+
+        private void tabPage2_Click(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void tabControl1_SizeChanged(object sender, EventArgs e)
         {
 
         }

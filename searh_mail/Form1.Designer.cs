@@ -40,7 +40,11 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button8 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -93,9 +97,9 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(55, 280);
+            this.button4.Location = new System.Drawing.Point(608, 69);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(200, 45);
+            this.button4.Size = new System.Drawing.Size(174, 45);
             this.button4.TabIndex = 5;
             this.button4.Text = "thunder";
             this.button4.UseVisualStyleBackColor = true;
@@ -123,7 +127,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(601, 218);
+            this.button7.Location = new System.Drawing.Point(608, 11);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(174, 52);
             this.button7.TabIndex = 8;
@@ -140,6 +144,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(458, 201);
             this.tabControl1.TabIndex = 9;
+            this.tabControl1.SizeChanged += new System.EventHandler(this.tabControl1_SizeChanged);
             // 
             // tabPage1
             // 
@@ -153,13 +158,43 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.button8);
+            this.tabPage2.Controls.Add(this.label1);
+            this.tabPage2.Controls.Add(this.textBox3);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 74);
+            this.tabPage2.Size = new System.Drawing.Size(450, 175);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "настройки";
             this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(9, 6);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(100, 20);
+            this.textBox3.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(154, 154);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "label1";
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(0, 149);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(148, 23);
+            this.button8.TabIndex = 2;
+            this.button8.Text = "папка с программой";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click_1);
             // 
             // Form1
             // 
@@ -180,6 +215,8 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -199,6 +236,9 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBox3;
     }
 }
 
