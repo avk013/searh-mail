@@ -11,20 +11,56 @@ using System.Text.RegularExpressions;
 using MySql.Data.MySqlClient;
 //using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace searh_mail
 {
     public partial class Form1 : Form
     {
-        const string server = "172.16.36.205";
-        const string name = "inventar";
-        const string pass = "pa100slow";
+        const string server = "172.16.36.205", name = "inventar", pass = "pa100slow";
         const string db = "inventar";
         string[] data2db = new string[1];
-        string folder_path = @"e:\!invent\";
+        string folder_path = @"e:\!invent\", kab_num="";
         public Form1()
         {
             InitializeComponent();
+        }
+        public static DialogResult InputBox(string title, string promptText, ref string value)
+        {
+            Form form = new Form();
+            Label label = new Label();
+            TextBox textBox = new TextBox();
+            Button buttonOk = new Button();
+            //   Button buttonCancel = new Button();
+            form.Text = title;
+            label.Text = promptText;
+            textBox.Text = value;
+            buttonOk.Text = "OK";
+            //   buttonCancel.Text = "Cancel";
+            buttonOk.DialogResult = DialogResult.OK;
+            //   buttonCancel.DialogResult = DialogResult.Cancel;
+            label.SetBounds(9, 20, 372, 13);
+            textBox.SetBounds(12, 36, 372, 20);
+            buttonOk.SetBounds(228, 72, 75, 23);
+            // buttonCancel.SetBounds(309, 72, 75, 23);
+            label.AutoSize = true;
+            textBox.Anchor = textBox.Anchor | AnchorStyles.Right;
+            buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            //            buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+
+            form.ClientSize = new Size(396, 107);
+            //form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
+            form.Controls.AddRange(new Control[] { label, textBox, buttonOk });
+            form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
+            form.FormBorderStyle = FormBorderStyle.FixedDialog;
+            form.StartPosition = FormStartPosition.CenterScreen;
+            form.MinimizeBox = false;
+            form.MaximizeBox = false;
+            form.AcceptButton = buttonOk;
+            //   form.CancelButton = buttonCancel;
+            DialogResult dialogResult = form.ShowDialog();
+            value = textBox.Text;
+            return dialogResult;
         }
         static string[] SearchDirectory(string patch)
         { //находим все папки в по указанному пути
@@ -43,45 +79,7 @@ namespace searh_mail
             return ReultSearch;
         }
         private void button1_Click(object sender, EventArgs e)
-        {
-            //получаем переменную Windows с адресом текущего пользователя
-            string[] pattches = { @"e:\thunderbird\", @"c:\Users\" };
-            //string PatchProfile = Environment.GetEnvironmentVariable("USERPROFILE");
-            string PatchProfile = "";
-            string ListPatch = "найденные файлы \n"; //заголовок для строк
-            //ищем все вложенные папки 
-            for (int i = 0; i < pattches.Length; i++)
-            {
-                PatchProfile = pattches[i];
-                string[] S = SearchDirectory(PatchProfile);
-                //создаем строку в которой соберем все пути
-
-                foreach (string folderPatch in S)
-                {
-                    //добавляем новую строку в список
-                    // ListPatch += folderPatch + "\n";
-                    try
-                    {
-                        //пытаемся найти данные в папке 
-                        //string[] F = SearchFile(folderPatch, "*.png");
-                        string[] F = SearchFile(folderPatch, "prefs.js");
-                        // string[] F = SearchFile(@"e:\", "prefs.js");
-                        foreach (string FF in F)
-                        {
-                            //добавляем файл в список 
-                            ListPatch += FF + "\n";
-                        }
-
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-
-            //выводим список на экран 
-            MessageBox.Show(ListPatch);
-        }
+        {  }
         static readonly string[] LowNames =
          {
      "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL",
@@ -162,66 +160,10 @@ namespace searh_mail
             return outs;
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            string[] dir_s = { @"thunderbird\", @"Users\", @"mail\", @"почта\", @"пошта\", @"Bat\", @"The Bat\", @"TheBat\", @"TheBat!\", @"The Bat!\" };
-            string[] Drives = Environment.GetLogicalDrives();
-            string[] pattches = new string[100];
-            int i = 0;
-            // string ss = "";
-            foreach (string s in Drives)
-            {
-                foreach (string sd in dir_s)
-                    pattches[i++] = s + sd;
-                //ss +=s+sd;
-            }
-            //foreach (string a in pathes) ss += a+"; ";
-            //MessageBox.Show(ss);
-            string PatchProfile = "";
-            string ListPatch = "найденные файлы \n"; //заголовок для строк
-                                                     //ищем все вложенные папки 
-                                                     // for (i = 0; i < pattches.Length; i++)
-            {
-                //   PatchProfile = pattches[i];
-                string[] S = SearchDirectory(@"f:\");
-                //создаем строку в которой соберем все пути
 
-                foreach (string folderPatch in S)
-                {
-                    //добавляем новую строку в список
-                    // ListPatch += folderPatch + "\n";
-                    try
-                    {
-                        //пытаемся найти данные в папке 
-                        //string[] F = SearchFile(folderPatch, "*.png");
-                        string[] F = SearchFile(folderPatch, "prefs.js");
-                        // string[] F = SearchFile(@"e:\", "prefs.js");
-                        foreach (string FF in F)
-                        {
-                            //добавляем файл в список 
-                            ListPatch += FF + "\n";
-                        }
-                        F = SearchFile(folderPatch, "Account.CFN");
-                        // string[] F = SearchFile(@"e:\", "prefs.js");
-                        foreach (string FF in F)
-                        {
-                            //добавляем файл в список 
-                            ListPatch += FF + "\n";
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-
-            //выводим список на экран 
-            MessageBox.Show(ListPatch);
-        }
 
         private void button4_Click(object sender, EventArgs e)
         { MessageBox.Show(mail_thunderbird(@"E:\thunderbird\6yjr55bj.default\prefs.js")); }
-
         private string mail_bat(string path)
         {
             string st = "", outs = ""; ;
@@ -341,6 +283,7 @@ namespace searh_mail
             // appdata = appdata.Substring(3, appdata.Length-"Roaming".Length-3);
             appdata = appdata.Substring(3, appdata.Length - 3);
             string[] dir_s = { appdata,@"thunderbird\", @"mail\", @"почта\", @"пошта\", @"Bat\", @"The Bat\", @"TheBat\", @"TheBat!\", @"The Bat!\" };
+            label2.Text= appdata;
             string[] Drives = Environment.GetLogicalDrives();
             string[] pattches = new string[100];
             int num = 0;
@@ -401,37 +344,6 @@ namespace searh_mail
             out_mail();
         }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            string[] dir_s = { @"thunderbird\", @"mail\", @"почта\", @"пошта\", @"Bat\", @"The Bat\", @"TheBat\", @"TheBat!\", @"The Bat!\" };
-            string[] Drives = Environment.GetLogicalDrives();
-            string[] pattches = new string[100];
-            int i = 0;
-            string s = @"e:\";
-            {
-                foreach (string sd in dir_s)
-                    pattches[i++] = s + sd;
-            }
-            string PatchProfile = "";
-            string ListPatch = ""; //заголовок для строк
-            //ищем все вложенные папки 
-            for (i = 0; i < pattches.Length; i++)
-            {
-                PatchProfile = pattches[i];
-                string[] S = SearchDirectory(PatchProfile);
-                //string[] S = SearchDirectory(@"f:\");
-                //создаем строку в которой соберем все пути
-                foreach (string folderPatch in S)
-                {
-                    string[] F = SearchFile(folderPatch, "Account.CFN");
-                    // string[] F = SearchFile(@"e:\", "prefs.js");
-                    foreach (string FF in F)
-                    {
-                        textBox2.Text += FF + "___" + mail_bats(FF) + Environment.NewLine;
-                    }
-                }
-            }
-        }
 
         private void button7_Click(object sender, EventArgs e)
         {  //aida /r filename /text /langru /safe /hw /html /custom C:\1.rpf
@@ -484,6 +396,8 @@ namespace searh_mail
         private void Form1_Load(object sender, EventArgs e)
         {
             label1.Text = folder_path;
+           
+            InputBox("кабинет", "укажите каюинет", ref kab_num);
         }
 
         private void button8_Click_1(object sender, EventArgs e)
@@ -505,5 +419,6 @@ namespace searh_mail
         {
 
         }
+      
     }
 }
