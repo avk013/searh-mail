@@ -322,7 +322,7 @@ namespace searh_mail
                         {
                             //добавляем файл в список 
                             // MessageBox.Show(FF + "_"+mail_bat(FF)+Environment.NewLine);
-                        //    ListPatch += mail_bats(FF) + "\n";
+                           ListPatch += mail_batss(FF) + "\n";
                             // ListPatch += FF + "\n";
                         }
                         F = SearchFile(folderPatch, "*.oeaccount");
@@ -400,6 +400,11 @@ namespace searh_mail
             InputBox("кабинет", "укажите каюинет", ref kab_num);
         }
 
+        private void the_bat_Click(object sender, EventArgs e)
+        {
+            textBox2.Text = mail_batss(@"E:\The Bat!\Data\Mail\udp404@i.ua\Account.CFN");
+        }
+
         private void button8_Click_1(object sender, EventArgs e)
         {
             FolderBrowserDialog FBD = new FolderBrowserDialog();
@@ -419,6 +424,79 @@ namespace searh_mail
         {
 
         }
-      
+        private string mail_batss(string path)
+        {
+            string st = "";
+            string outs = "";
+            using (var reader = new StreamReader(path, Encoding.ASCII))
+            //using (var reader = new StreamReader(@"e:\The Bat!\Data\Mail\udp404@i.ua\Account.CFN", Encoding.ASCII))
+            //using (var reader = new StreamReader(@"G:\THEBAT!\Mail\asom-mailru\Account.CFN"))
+
+            {
+                var builder = new StringBuilder((int)reader.BaseStream.Length + 1);
+                while (!reader.EndOfStream)
+                {
+                    var chr = (char)reader.Read();
+                    if (chr < 32)
+                    {// chr = LowNames[chr];
+                    }
+                    if (chr == 0) chr = '_';
+                    else
+                    if (chr > 127) chr = '_'; else st += chr;
+                    //builder.Clear();
+                    builder.Append(chr);
+                }
+
+                var result = builder.ToString();
+                st = FixString(st);
+                st = st.Trim();
+                textBox1.Text = st;
+                string[] flags = { " mailtoFromAddr", "Name" };
+                string flag = "";
+                for (int i = 0; i < flags.Length; i++)
+                {
+                    flag = flags[i];
+                    ///
+                    while (st.IndexOf(flag) != -1)
+                    {
+                        int a = st.IndexOf(flag);
+                        if (st.Substring(a + flag.Length, 1) != " ")
+                        {
+                            string aa = st.Substring(a + flag.Length, 50);
+                            // textBox2.Text += "_"+aa;
+                            int aa_sobaka = aa.IndexOf("@");
+                            if (aa_sobaka > 0)
+                            {//узнаем место собаки и находи имя
+                                string aa_name = aa.Substring(0, aa_sobaka);
+                                //   textBox2.Text += aa+"_"+aa_name.ToString()+"_" + Environment.NewLine;
+                                //  ищем адрес имени после собаки   
+                                int aa_addres = aa.IndexOf(aa_name, aa_sobaka);
+                                // если имя найдено отрезаем и узнаем адрес
+                                int points = aa.LastIndexOf(".");
+                                if (aa.LastIndexOf("pop.") != -1)
+                                    aa = aa.Substring(0, aa.LastIndexOf("pop."));
+                                if (aa.LastIndexOf("pop3.") != -1)
+                                    aa = aa.Substring(0, aa.LastIndexOf("pop3."));
+                                if (aa.LastIndexOf("imap.") != -1)
+                                    aa = aa.Substring(0, aa.LastIndexOf("imap."));
+                                if (aa.LastIndexOf(aa.Substring(0,3)) != -1)
+                                    aa = aa.Substring(0, aa.Length-aa.LastIndexOf(aa.Substring(0, 3)));
+
+                                if (aa.IndexOf(" ") < aa.LastIndexOf(".")&& aa.IndexOf(" ")!=-1)
+                                    aa = aa.Substring(0, aa.IndexOf(" "));
+                                else if (aa.LastIndexOf(".") != -1) aa = aa.Substring(0, aa.LastIndexOf(".") + 3);
+                                if (aa.LastIndexOf(".") != -1)
+                                    outs += aa + Environment.NewLine;
+                                //textBox2.Text += aa + Environment.NewLine;
+                            }
+                        }
+                        st = st.Remove(a, 60);
+                    }
+                }
+                st = Regex.Replace(st, "[ ]+", " ");
+                //MessageBox.Show(st);
+            }
+            return outs;
+        }
     }
 }

@@ -40,6 +40,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.the_bat = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.SuspendLayout();
@@ -67,7 +68,7 @@
             this.all_m.Location = new System.Drawing.Point(0, 207);
             this.all_m.Name = "all_m";
             this.all_m.Size = new System.Drawing.Size(575, 45);
-            this.all_m.TabIndex = 6;
+            this.all_m.TabIndex = 1;
             this.all_m.Text = "общий";
             this.all_m.UseVisualStyleBackColor = true;
             this.all_m.Click += new System.EventHandler(this.button5_Click);
@@ -84,7 +85,7 @@
             this.aid.Location = new System.Drawing.Point(608, 11);
             this.aid.Name = "aid";
             this.aid.Size = new System.Drawing.Size(174, 52);
-            this.aid.TabIndex = 8;
+            this.aid.TabIndex = 2;
             this.aid.Text = "aida";
             this.aid.UseVisualStyleBackColor = true;
             this.aid.Click += new System.EventHandler(this.button7_Click);
@@ -159,11 +160,22 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "label2";
             // 
+            // the_bat
+            // 
+            this.the_bat.Location = new System.Drawing.Point(3, 258);
+            this.the_bat.Name = "the_bat";
+            this.the_bat.Size = new System.Drawing.Size(592, 62);
+            this.the_bat.TabIndex = 12;
+            this.the_bat.Text = "the bat";
+            this.the_bat.UseVisualStyleBackColor = true;
+            this.the_bat.Click += new System.EventHandler(this.the_bat_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(923, 576);
+            this.Controls.Add(this.the_bat);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.aid);
@@ -195,6 +207,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button the_bat;
     }
 }
 
