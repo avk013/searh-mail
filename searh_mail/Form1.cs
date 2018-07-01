@@ -413,7 +413,8 @@ VALUES ('404', '404', '"+mail+"', '');";
         private void button7_Click(object sender, EventArgs e)
         {  //aida /r filename /text /langru /safe /hw /html /custom C:\1.rpf
             string filename = num_kab +"~"+ Environment.MachineName + "~"+Environment.UserName;
-            Process.Start(@"e:\!invent\aida64", @"/r "+folder_path+ @"out\"+filename+" /text /langru /safe /hw /html /custom " + dir_templ);
+            folder_path= folder_path.Substring(0, folder_path.LastIndexOf(@"\"));
+            Process.Start(folder_path+@"\aida\aida64", @"/r "+folder_path+ @"\out\"+filename+" /text /langru /safe /hw /html /custom " + dir_templ);
             }
 
         private void button8_Click(object sender, EventArgs e)
@@ -461,7 +462,7 @@ VALUES ('404', '404', '"+mail+"', '');";
 
         private void Form1_Load(object sender, EventArgs e)
         {//привязываемся к папке в которой программа
-          //  folder_path= System.Reflection.Assembly.GetEntryAssembly().Location;
+            folder_path= System.Reflection.Assembly.GetEntryAssembly().Location;
             label1.Text = folder_path;
             dir_templ = dir_aida + dir_templ;
             but_dir_aida.Text = dir_aida;
@@ -480,8 +481,7 @@ VALUES ('404', '404', '"+mail+"', '');";
         }
 
         private void tabPage2_Click(object sender, EventArgs e)
-        {
-           
+        {        
         }
 
         private void tabControl1_SizeChanged(object sender, EventArgs e)
