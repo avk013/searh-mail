@@ -19,8 +19,61 @@ namespace searh_mail
     {
         const string server = "172.16.36.205", name = "inventar", pass = "pa100slow";
         const string db = "inventar";
+        string dir_aida = @"e:\!invent\";
+        string dir_templ = "1.rpf", num_kab="404";
         string[] data2db = new string[1];
-        string folder_path = @"e:\!invent\", kab_num="";
+        string folder_path = @"e:\!invent\";
+        private MySqlConnection connection;
+
+        private void init()
+        {
+            string connectionString;
+            connectionString = "SERVER=" + server + ";" + "DATABASE=" +
+            db + ";" + "UID=" + name + ";" + "PASSWORD=" + pass + ";";
+            connection = new MySqlConnection(connectionString);
+        }
+        //open connection to database
+        private bool OpenConnection()
+        {
+            try
+            {
+                connection.Open();
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                //When handling errors, you can your application's response based 
+                //on the error number.
+                //The two most common error numbers when connecting are as follows:
+                //0: Cannot connect to server.
+                //1045: Invalid user name and/or password.
+                switch (ex.Number)
+                {
+                    case 0:
+                        MessageBox.Show("Cannot connect to server.  Contact administrator");
+                        break;
+                    case 1045:
+                        MessageBox.Show("Invalid username/password, please try again");
+                        break;
+                }
+                return false;
+            }
+        }
+
+        //Close connection
+        private bool CloseConnection()
+        {
+            try
+            {
+                connection.Close();
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
         public Form1()
         {
             InitializeComponent();
@@ -277,7 +330,7 @@ namespace searh_mail
             else outs = "error open profile thunderbird";
             return outs;
         }
-        private void out_mail()
+        private string  out_mail()
         {
             string appdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             // appdata = appdata.Substring(3, appdata.Length-"Roaming".Length-3);
@@ -286,7 +339,6 @@ namespace searh_mail
             label2.Text= appdata;
             string[] Drives = Environment.GetLogicalDrives();
             string[] pattches = new string[100];
-            int num = 0;
             int i = 0;
             foreach (string s in Drives) //ищем диски и помещаем список в массив
             {
@@ -314,7 +366,7 @@ namespace searh_mail
                         {
                             //добавляем файл в список 
                             //     ListPatch += FF + "\n";
-                            if (mail_thunderbird(FF) != "") ListPatch += (++num).ToString()+")."+mail_thunderbird(FF) + Environment.NewLine;
+                            if (mail_thunderbird(FF) != "") ListPatch +=mail_thunderbird(FF);
                         }
                         F = SearchFile(folderPatch, "Account.CFN");
                         // string[] F = SearchFile(@"e:\", "prefs.js");
@@ -322,13 +374,13 @@ namespace searh_mail
                         {
                             //добавляем файл в список 
                             // MessageBox.Show(FF + "_"+mail_bat(FF)+Environment.NewLine);
-                           ListPatch += mail_batss(FF) + "\n";
+                           ListPatch += mail_batss(FF);
                             // ListPatch += FF + "\n";
                         }
                         F = SearchFile(folderPatch, "*.oeaccount");
                         foreach (string FF in F)
                         {   //добавляем файл в список 
-                            if (mail_microsoft(FF) != "") ListPatch += (++num).ToString() + ")." + mail_microsoft(FF) + Environment.NewLine;
+                            if (mail_microsoft(FF) != "") ListPatch += mail_microsoft(FF);
                         } }
                     catch
                     { }
@@ -336,18 +388,32 @@ namespace searh_mail
             }
 
             //выводим список на экран 
-            MessageBox.Show(ListPatch);
+            textBox2.Text = ListPatch;
+            return ListPatch;
+            //MessageBox.Show(ListPatch);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            out_mail();
+            string mail=out_mail();
+            string sql = @"INSERT INTO `mail` (`komp_name`, `kabinet`, `mail`, `notes`)
+VALUES ('404', '404', '"+mail+"', '');";
+            init();
+            if (this.OpenConnection() == true)
+            { //create command and assign the query and connection from the constructor
+                MySqlCommand cmd = new MySqlCommand(sql, connection);
+                //Execute command
+                cmd.ExecuteNonQuery();
+                //close connection
+                this.CloseConnection();
+            }
         }
 
 
         private void button7_Click(object sender, EventArgs e)
         {  //aida /r filename /text /langru /safe /hw /html /custom C:\1.rpf
-            Process.Start(@"e:\!invent\aida64", @"/r "+folder_path+ @"out\filename /text /langru /safe /hw /html /custom " + folder_path + @"1.rpf");
+            string filename = num_kab +"~"+ Environment.MachineName + "~"+Environment.UserName;
+            Process.Start(@"e:\!invent\aida64", @"/r "+folder_path+ @"out\"+filename+" /text /langru /safe /hw /html /custom " + dir_templ);
             }
 
         private void button8_Click(object sender, EventArgs e)
@@ -394,15 +460,13 @@ namespace searh_mail
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {
+        {//привязываемся к папке в которой программа
+          //  folder_path= System.Reflection.Assembly.GetEntryAssembly().Location;
             label1.Text = folder_path;
-           
-            InputBox("кабинет", "укажите каюинет", ref kab_num);
-        }
-
-        private void the_bat_Click(object sender, EventArgs e)
-        {
-            textBox2.Text = mail_batss(@"E:\The Bat!\Data\Mail\udp404@i.ua\Account.CFN");
+            dir_templ = dir_aida + dir_templ;
+            but_dir_aida.Text = dir_aida;
+            but_dir_templ.Text = dir_templ;
+            InputBox("кабинет", "укажите кабинет", ref num_kab);
         }
 
         private void button8_Click_1(object sender, EventArgs e)
@@ -438,20 +502,25 @@ namespace searh_mail
                 {
                     var chr = (char)reader.Read();
                     if (chr < 32)
-                    {// chr = LowNames[chr];
+                    { chr = (char)0;
                     }
-                    if (chr == 0) chr = '_';
-                    else
-                    if (chr > 127) chr = '_'; else st += chr;
+                    //if (chr == 0) chr = (char)32;
+                    //if (chr == 0) chr = (char)32;
+                    //  else
+                    //if (chr > 126) chr = '_'; else st += chr;
+                    if (chr > 126) chr = (char)0;// else st += chr;
+                    st += chr;
                     //builder.Clear();
+
                     builder.Append(chr);
                 }
 
                 var result = builder.ToString();
                 st = FixString(st);
                 st = st.Trim();
+                st = st.Replace(Environment.NewLine, " ");
                 textBox1.Text = st;
-                string[] flags = { " mailtoFromAddr", "Name" };
+                string[] flags = { " mailtoFromAddr", "xtName" };
                 string flag = "";
                 for (int i = 0; i < flags.Length; i++)
                 {
@@ -473,19 +542,25 @@ namespace searh_mail
                                 int aa_addres = aa.IndexOf(aa_name, aa_sobaka);
                                 // если имя найдено отрезаем и узнаем адрес
                                 int points = aa.LastIndexOf(".");
-                                if (aa.LastIndexOf("pop.") != -1)
+                                //?? а вдруг в емаиде есть названия протоколов или релай????
+                                //string aaa = aa.Substring(aa.IndexOf("@"), aa.Length - aa.IndexOf("@"));                              
+                               if (aa.LastIndexOf("pop.") != -1)
                                     aa = aa.Substring(0, aa.LastIndexOf("pop."));
-                                if (aa.LastIndexOf("pop3.") != -1)
+                               if (aa.LastIndexOf("pop3.") != -1)
                                     aa = aa.Substring(0, aa.LastIndexOf("pop3."));
-                                if (aa.LastIndexOf("imap.") != -1)
+                                 if (aa.LastIndexOf("imap.") != -1)
                                     aa = aa.Substring(0, aa.LastIndexOf("imap."));
-                                if (aa.LastIndexOf(aa.Substring(0,3)) != -1)
-                                    aa = aa.Substring(0, aa.Length-aa.LastIndexOf(aa.Substring(0, 3)));
+                                if (aa.LastIndexOf("smtp.") != -1)
+                                    aa = aa.Substring(0, aa.LastIndexOf("smtp."));
+                                if (aa.LastIndexOf("relay.") != -1)
+                                    aa = aa.Substring(0, aa.LastIndexOf("relay."));
+                                //     if (aa.LastIndexOf(aa.Substring(0,3)) != -1)
+                                //       aa = aa.Substring(0, aa.Length-aa.LastIndexOf(aa.Substring(0, 3)));
 
                                 if (aa.IndexOf(" ") < aa.LastIndexOf(".")&& aa.IndexOf(" ")!=-1)
                                     aa = aa.Substring(0, aa.IndexOf(" "));
-                                else if (aa.LastIndexOf(".") != -1) aa = aa.Substring(0, aa.LastIndexOf(".") + 3);
-                                if (aa.LastIndexOf(".") != -1)
+                               // else if (aa.LastIndexOf(".") != -1) aa = aa.Substring(0, aa.LastIndexOf(".") + 3);
+                                if (aa.LastIndexOf(".") != -1 && aa.Length>5)
                                     outs += aa + Environment.NewLine;
                                 //textBox2.Text += aa + Environment.NewLine;
                             }
