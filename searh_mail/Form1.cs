@@ -12,17 +12,20 @@ using MySql.Data.MySqlClient;
 //using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Net.NetworkInformation;
+using System.Net;
 
 namespace searh_mail
 {
     public partial class Form1 : Form
     {
-        const string server = "172.16.36.205", name = "inventar", pass = "pa100slow";
+        const string server = "172.16.36.207", name = "inventar", pass = "pa100slow";
         const string db = "inventar";
         string dir_aida = @"e:\!invent\";
         string dir_templ = "1.rpf", num_kab="404";
         string[] data2db = new string[1];
         string folder_path = @"e:\!invent\";
+        string filename;
         private MySqlConnection connection;
 
         private void init()
@@ -131,8 +134,7 @@ namespace searh_mail
             //  MessageBox.Show(patch+pattern);
             return ReultSearch;
         }
-        private void button1_Click(object sender, EventArgs e)
-        {  }
+
         static readonly string[] LowNames =
          {
      "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", "BEL",
@@ -412,7 +414,6 @@ VALUES ('404', '404', '"+mail+"', '');";
 
         private void button7_Click(object sender, EventArgs e)
         {  //aida /r filename /text /langru /safe /hw /html /custom C:\1.rpf
-            string filename = num_kab +"~"+ Environment.MachineName + "~"+Environment.UserName;
             folder_path= folder_path.Substring(0, folder_path.LastIndexOf(@"\"));
             Process.Start(folder_path+@"\aida\aida64", @"/r "+folder_path+ @"\out\"+filename+" /text /langru /safe /hw /html /custom " + dir_templ);
             }
@@ -467,7 +468,34 @@ VALUES ('404', '404', '"+mail+"', '');";
             dir_templ = dir_aida + dir_templ;
             but_dir_aida.Text = dir_aida;
             but_dir_templ.Text = dir_templ;
+            //combobox from file
+            string[] lineOfContents = File.ReadAllLines("brend.csv");
+            foreach (var line in lineOfContents)
+            {
+                string[] tokens = line.Split(',');
+                comboBox1.Items.Add(tokens[1]);
+            }
+            //
+            // Ping's the local machine.
+            Ping pingSender = new Ping();
+            // IPAddress address = IPAddress.Loopback;
+            IPAddress address = System.Net.IPAddress.Parse(server);
+            PingReply reply = pingSender.Send(address);
+
+            if (reply.Status == IPStatus.Success)
+            {               
+            }
+            else
+            {
+                radioButton2.Checked = true;
+                radioButton1.Text = "удаленно (вероятно недоступен!!!)";
+                radioButton1.ForeColor = Color.Red;
+            }
+            ///
+
+
             InputBox("кабинет", "укажите кабинет", ref num_kab);
+            filename = num_kab + "~" + Environment.MachineName + "~" + Environment.UserName;
         }
 
         private void button8_Click_1(object sender, EventArgs e)
@@ -478,6 +506,43 @@ VALUES ('404', '404', '"+mail+"', '');";
             {
                 folder_path = FBD.SelectedPath; label1.Text = folder_path;
             }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            int flag = 0;
+            if (radioButton2.Checked == true) flag = 2; else flag = 1;
+            string mail = out_mail();
+            string sql = @"INSERT INTO `mail` (`komp_name`, `kabinet`, `mail`, `notes`)
+VALUES ('404', '404', '" + mail + "', '');";
+            if (flag==1) 
+                {
+                label10.Text = sql;
+            init();
+            if (this.OpenConnection() == true)
+            { //create command and assign the query and connection from the constructor
+                MySqlCommand cmd = new MySqlCommand(sql, connection);
+                //Execute command
+                cmd.ExecuteNonQuery();
+                //close connection
+                this.CloseConnection();
+            }
+            }
+            else
+            {//сохраняем данные в файл
+                label10.Text = "ok";
+                folder_path = folder_path.Substring(0, folder_path.LastIndexOf(@"\"));
+                using (System.IO.StreamWriter file =
+            new System.IO.StreamWriter(folder_path+ @"/"+filename+".sql", true))
+                {
+                    file.WriteLine(sql);
+                }
+            }
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked == true) label10.Text = "2";else label10.Text = "1";
         }
 
         private void tabPage2_Click(object sender, EventArgs e)
